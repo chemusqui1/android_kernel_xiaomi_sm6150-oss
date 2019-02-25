@@ -26,6 +26,10 @@
 #include "dsi_parser.h"
 #include "sde_trace.h"
 
+#ifdef CONFIG_KLAPSE
+#include "../sde/klapse.h"
+#endif
+
 /**
  * topology is currently defined by a set of following 3 values:
  * 1. num of layer mixers
@@ -653,6 +657,55 @@ static int dsi_panel_update_backlight_demura_level(struct dsi_panel *panel,
 
 	pr_debug("backlight_demura_level: %d bkl: %d panel->dc_demura_threshold = %d\n",
 		panel->backlight_demura_level, bl_lvl, panel->dc_demura_threshold);
+	return rc;
+}
+
+static int dsi_panel_update_backlight(struct dsi_panel *panel,
+	u32 bl_lvl)
+{
+	int rc = 0;
+	struct mipi_dsi_device *dsi;
+
+	if (!panel || (bl_lvl > 0xffff)) {
+		pr_err("invalid params\n");
+		return -EINVAL;
+	}
+
+	if (panel->bl_config.bl_remap_flag && panel->bl_config.brightness_max_level &&
+			panel->bl_config.bl_max_level) {
+		/*
+		 * map UI brightness into driver backlight level
+		 *    y = kx+b;
+		 */
+		bl_lvl = (panel->bl_config.bl_max_level - panel->bl_config.bl_min_level) * bl_lvl /
+				panel->bl_config.brightness_max_level + panel->bl_config.bl_min_level;
+		pr_debug("bl_lvl: %d\n", bl_lvl);
+	}
+
+	dsi = &panel->mipi_device;
+	
+#ifdef CONFIG_KLAPSE
+	set_rgb_slider(bl_lvl);
+#endif
+
+	if (panel->bl_config.bl_inverted_dbv)
+		bl_lvl = (((bl_lvl & 0xff) << 8) | (bl_lvl >> 8));
+
+	if (panel->bl_config.dcs_type_ss_ea || panel->bl_config.dcs_type_ss_eb)
+		rc = mipi_dsi_dcs_set_display_brightness_ss(dsi, bl_lvl);
+	else
+		rc = mipi_dsi_dcs_set_display_brightness(dsi, bl_lvl);
+
+	if (rc < 0)
+		pr_err("failed to update dcs backlight:%d\n", bl_lvl);
+
+	/* For the f4_41 panel, we need to switch the DEMURA_LEVEL according to the value of the 51 register. */
+	if (panel->bl_config.xiaomi_f4_41_flag)
+		rc = dsi_panel_update_backlight_demura_level(panel, bl_lvl);
+
+	if (rc < 0)
+		pr_err("failed to update demura backlight:%d\n", bl_lvl);
+
 	return rc;
 }
 
