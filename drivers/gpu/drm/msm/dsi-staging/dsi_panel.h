@@ -222,6 +222,7 @@ struct dsi_panel {
 
 	int hbm_mode;
 
+	u32 init_delay_us;
 	bool lp11_init;
 	bool ulps_feature_enabled;
 	bool ulps_suspend_enabled;
