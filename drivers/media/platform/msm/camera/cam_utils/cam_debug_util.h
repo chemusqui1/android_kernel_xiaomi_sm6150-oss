@@ -79,6 +79,7 @@ void cam_debug_log(unsigned int module_id, const char *func, const int line,
  */
 const char *cam_get_module_name(unsigned int module_id);
 
+#ifdef CONFIG_DEBUG_KERNEL
 /*
  * CAM_ERR
  * @brief    :  This Macro will print error logs
@@ -149,4 +150,37 @@ const char *cam_get_module_name(unsigned int module_id);
 		current->tgid, current->pid,                                \
 		cam_get_module_name(__module), __func__,  __LINE__, ##args)
 
+/*
+ * CAM_ERR_RATE_LIMIT_CUSTOM
+ * @brief    :  This Macro will print error logs with custom ratelimit
+ *
+ * @__module :  Respective module id which is been calling this Macro
+ * @interval :  Time interval in seconds
+ * @burst    :  No of logs to print in interval time
+ * @fmt      :  Formatted string which needs to be print in log
+ * @args     :  Arguments which needs to be print in log
+ */
+#define CAM_ERR_RATE_LIMIT_CUSTOM(__module, interval, burst, fmt, args...) \
+	({								\
+		static DEFINE_RATELIMIT_STATE(_rs,			\
+			(interval * HZ),				\
+			burst);						\
+		if (__ratelimit(&_rs))					\
+			pr_err("CAM_ERR: %s: %s: %d " fmt "\n",		\
+				cam_get_module_name(__module), __func__,\
+				__LINE__, ##args);			\
+	})
+
+#else
+#define CAM_ERR(__module, fmt, args...)		do { } while(0)
+#define CAM_WARN(__module, fmt, args...)	do { } while(0)
+#define CAM_INFO(__module, fmt, args...)	do { } while(0)
+#define CAM_INFO_RATE_LIMIT(__module, fmt, args...)	do { } while(0)
+#define CAM_INFO_RATE_LIMIT_CUSTOM(__module, interval, burst, fmt, args...) \
+						do { } while(0)
+#define CAM_DBG(__module, fmt, args...)		do { } while(0)
+#define CAM_ERR_RATE_LIMIT(__module, fmt, args...)	do { } while(0)
+#define CAM_ERR_RATE_LIMIT_CUSTOM(__module, interval, burst, fmt, args...)	\
+						do { } while(0)
+#endif /* CONFIG_DEBUG_KERNEL */
 #endif /* _CAM_DEBUG_UTIL_H_ */
