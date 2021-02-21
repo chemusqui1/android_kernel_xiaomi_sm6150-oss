@@ -5218,7 +5218,7 @@ CONFIG_QCOM_SPMI_ADC5=y
 # CONFIG_SRF04 is not set
 # CONFIG_SX9500 is not set
 # CONFIG_SRF08 is not set
-# CONFIG_US_PROXIMITY is not set
+CONFIG_US_PROXIMITY=y
 
 #
 # Temperature sensors
