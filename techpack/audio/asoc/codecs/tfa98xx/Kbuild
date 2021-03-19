@@ -88,8 +88,7 @@ CDEFINES +=	-DANI_LITTLE_BYTE_ENDIAN \
 		-D__linux__ \
 		-DDEBUG
 
-
-ifneq (,$(filter $(TARGET_PRODUCT), davinci davinciin phoenix phoenixin tucana toco tocoin))
+ifdef CONFIG_TFA_NON_DSP_SOLUTION
 	CDEFINES += -DTFA_NON_DSP_SOLUTION
 endif
 
