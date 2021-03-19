@@ -4663,7 +4663,7 @@ error:
 int dsi_panel_apply_hbm_mode(struct dsi_panel *panel)
 {
 	static const enum dsi_cmd_set_type type_map[] = {
-#ifdef CONFIG_MACH_XIAOMI_DAVINCI
+#if (defined CONFIG_MACH_XIAOMI_DAVINCI) || (defined CONFIG_MACH_XIAOMI_TOCO) || (defined CONFIG_MACH_XIAOMI_TUCANA)
 		DSI_CMD_SET_DISP_HBM_FOD_OFF,
 		DSI_CMD_SET_DISP_HBM_FOD_ON
 #else
