@@ -892,6 +892,9 @@ static int mhi_netdev_debugfs_chain(void *data, u64 val)
 	return 0;
 }
 
+DEFINE_DEBUGFS_ATTRIBUTE(debugfs_chain, NULL,
+			 mhi_netdev_debugfs_chain, "%llu\n");
+
 static void mhi_netdev_create_debugfs(struct mhi_netdev *mhi_netdev)
 {
 	char node_name[32];
