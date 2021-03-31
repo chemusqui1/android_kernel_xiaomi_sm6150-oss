@@ -800,6 +800,9 @@ int dsi_panel_switch_doze_mode(struct dsi_panel *panel, bool status){
 int dsi_panel_set_fod_hbm(struct dsi_panel *panel, bool status)
 {
 	int rc = 0;
+	
+	if (panel->doze_enabled)
+		return 0;
 
 	if (status) {
 		rc = dsi_panel_tx_cmd_set(panel, DSI_CMD_SET_DISP_HBM_FOD_ON);
