@@ -760,6 +760,7 @@ int dsi_panel_update_doze(struct dsi_panel *panel) {
 		if (rc)
 			pr_err("[%s] failed to send DSI_CMD_SET_NOLP cmd, rc=%d\n",
 					panel->name, rc);
+		panel->doze_mode = DSI_DOZE_LPM;
 	}
 
 	return rc;
@@ -787,12 +788,8 @@ int dsi_panel_set_doze_mode(struct dsi_panel *panel, enum dsi_doze_mode_type mod
 }
 
 int dsi_panel_switch_doze_mode(struct dsi_panel *panel, bool status){
-	if (panel->doze_enabled){
-		if (status){
-			panel->doze_mode = DSI_DOZE_HBM;
-		} else {
-			panel->doze_mode = DSI_DOZE_LPM;
-		}
+	if (status){
+		panel->doze_mode = DSI_DOZE_HBM;
 	} else {
 		panel->doze_mode = DSI_DOZE_LPM;
 	}
