@@ -706,7 +706,11 @@ KBUILD_CFLAGS	+= $(call cc-disable-warning, attribute-alias)
 ifdef CONFIG_CC_OPTIMIZE_FOR_SIZE
 KBUILD_CFLAGS   += -Os
 else
+ifeq ($(cc-name),clang)
+KBUILD_CFLAGS   += -O3
+else
 KBUILD_CFLAGS   += -O2
+endif
 endif
 
 # Tell compiler to tune the performance of the code for a specified
