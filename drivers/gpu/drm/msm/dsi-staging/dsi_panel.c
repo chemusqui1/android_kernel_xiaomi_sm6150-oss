@@ -791,6 +791,13 @@ int dsi_panel_set_doze_mode(struct dsi_panel *panel, enum dsi_doze_mode_type mod
 }
 
 int dsi_panel_switch_doze_mode(struct dsi_panel *panel, bool status){
+
+	if (!panel->doze_enabled)
+		return 0;
+
+	if (panel->hbm_mode)
+		return 0;
+
 	if (status){
 		panel->doze_mode = DSI_DOZE_HBM;
 	} else {
