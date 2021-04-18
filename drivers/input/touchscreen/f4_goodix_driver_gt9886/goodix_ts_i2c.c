@@ -2145,7 +2145,6 @@ static int goodix_event_handler(struct goodix_ts_device *dev,
 		if ((pre_buf[0] & 0xf0) == 0x20) {
 			ts_info("%s palm event detected, inform touch psensor\n", __func__);
 			core_data->palm_event = true;
-			update_palm_sensor_value(1);
 			return r;
 		}
 	}
