@@ -627,20 +627,20 @@ int fts_writeU8UX(u8 cmd, AddrSize addrSize, u64 address, u8 *data,
 			}
 
 			finalCmd[0] = cmd;
-			MI_TOUCH_LOGN(1, "%s %s addrSize = %d \n", VENDOR_TAG, __func__,
+			logError(1, "%s %s addrSize = %d \n", VENDOR_TAG, __func__,
 				 addrSize);
 			for (i = 0; i < addrSize; i++) {
 				finalCmd[i + 1] =
 				    (u8) ((address >> ((addrSize - 1 - i) * 8))
 					  & 0xFF);
-				MI_TOUCH_LOGN(1, "%s %s cmd[%d] = %02X \n", tag,
+				logError(1, "%s %s cmd[%d] = %02X \n", tag,
 					 __func__, i + 1, finalCmd[i + 1]);
 			}
 
 			memcpy(&finalCmd[addrSize + 1], data, toWrite);
 
 			if (fts_write(finalCmd, 1 + addrSize + toWrite) < OK) {
-				MI_TOUCH_LOGE(1, "%s %s: ERROR %08X \n", tag,
+				logError(1, "%s %s: ERROR %08X \n", tag,
 					 __func__, ERROR_BUS_W);
 				mutex_unlock(&rw_lock);
 				return ERROR_BUS_W;
@@ -651,7 +651,7 @@ int fts_writeU8UX(u8 cmd, AddrSize addrSize, u64 address, u8 *data,
 			data += toWrite;
 		}
 	} else {
-		MI_TOUCH_LOGE(1,
+		logError(1,
 			 "%s %s address size bigger than max allowed %d... ERROR %08X \n",
 			 tag, __func__, sizeof(u64), ERROR_OP_NOT_ALLOW);
 	}
@@ -697,7 +697,7 @@ int fts_writeReadU8UX(u8 cmd, AddrSize addrSize, u64 address, u8 *outBuf,
 		if (hasDummyByte == 1) {
 			if (fts_writeRead
 			    (finalCmd, 1 + addrSize, buff, toRead + 1) < OK) {
-				MI_TOUCH_LOGE(1,
+				logError(1,
 					 "%s %s: read error... ERROR %08X \n",
 					 tag, __func__, ERROR_BUS_WR);
 				mutex_unlock(&rw_lock);
@@ -707,7 +707,7 @@ int fts_writeReadU8UX(u8 cmd, AddrSize addrSize, u64 address, u8 *outBuf,
 		} else {
 			if (fts_writeRead(finalCmd, 1 + addrSize, buff, toRead)
 			    < OK) {
-				MI_TOUCH_LOGE(1,
+				logError(1,
 					 "%s %s: read error... ERROR %08X \n",
 					 tag, __func__, ERROR_BUS_WR);
 				mutex_unlock(&rw_lock);

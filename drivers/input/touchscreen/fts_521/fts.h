@@ -202,27 +202,6 @@ struct fts_hw_platform_data {
 	bool dump_click_count;
 #endif
 	unsigned long keystates;
-#ifdef CONFIG_TOUCHSCREEN_XIAOMI_TOUCHFEATURE
-	u32 touch_up_threshold_min;
-	u32 touch_up_threshold_max;
-	u32 touch_up_threshold_def;
-	u32 touch_tolerance_min;
-	u32 touch_tolerance_max;
-	u32 touch_tolerance_def;
-	u32 touch_idletime_min;
-	u32 touch_idletime_max;
-	u32 touch_idletime_def;
-	u32 cornerfilter_area_step1;
-	u32 cornerfilter_area_step2;
-	u32 cornerfilter_area_step3;
-	u32 deadzone_filter_ver[4 * GRIP_PARAMETER_NUM];
-	u32 deadzone_filter_hor[4 * GRIP_PARAMETER_NUM];
-	u32 edgezone_filter_ver[4 * GRIP_PARAMETER_NUM];
-	u32 edgezone_filter_hor[4 * GRIP_PARAMETER_NUM];
-	u32 cornerzone_filter_ver[4 * GRIP_PARAMETER_NUM];
-	u32 cornerzone_filter_hor1[4 * GRIP_PARAMETER_NUM];
-	u32 cornerzone_filter_hor2[4 * GRIP_PARAMETER_NUM];
-#endif
 };
 
 /*
@@ -303,6 +282,7 @@ struct fts_ts_info {
 	struct work_struct sleep_work;
 	struct work_struct suspend_work;
 	struct work_struct resume_work;
+	struct work_struct mode_handler_work;
 	struct work_struct cmd_update_work;
 	struct workqueue_struct *event_wq;
 	struct workqueue_struct *touch_feature_wq;
@@ -376,8 +356,7 @@ struct fts_ts_info {
 	wait_queue_head_t 	wait_queue;
 	struct completion tp_reset_completion;
 	atomic_t system_is_resetting;
-	int aod_status;
-	int fod_status;
+	unsigned int fod_status;
 	unsigned int fod_overlap;
 	unsigned long fod_id;
 	unsigned long fod_x;
@@ -385,6 +364,7 @@ struct fts_ts_info {
 	struct mutex fod_mutex;
 	struct mutex cmd_update_mutex;
 	bool fod_coordinate_update;
+	bool fod_status_set;
 	bool fod_pressed;
 	bool p_sensor_changed;
 	bool p_sensor_switch;
@@ -420,10 +400,4 @@ bool fts_is_infod(void);
 void fts_get_pointer(int *touch_flag, int *x, int *y);
 #endif
 void fts_restore_regvalues(void);
-
-#ifdef CONFIG_TOUCHSCREEN_XIAOMI_TOUCHFEATURE
-int fts_palm_sensor_cmd(int input);
-int fts_p_sensor_cmd(int input);
-bool fts_touchmode_edgefilter(unsigned int touch_id, int x, int y);
-#endif
 #endif

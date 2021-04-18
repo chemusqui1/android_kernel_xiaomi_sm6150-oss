@@ -144,20 +144,20 @@ int errorHandler(u8 *event, int size)
 
 	if (info != NULL && event != NULL && size > 1
 	    && event[0] == EVT_ID_ERROR) {
-		MI_TOUCH_LOGN(1, "%s errorHandler: Starting handling...\n", tag);
+		logError(1, "%s errorHandler: Starting handling...\n", tag);
 		addErrorIntoList(event, size);
 		switch (event[1]) {
 		case EVT_TYPE_ERROR_ESD:
 			res = fts_chip_powercycle(info);
 			if (res < OK) {
-				MI_TOUCH_LOGE(1,
+				logError(1,
 					 "%s errorHandler: Error performing powercycle ERROR %08X\n",
 					 tag, res);
 			}
 
 			res = fts_system_reset();
 			if (res < OK) {
-				MI_TOUCH_LOGE(1,
+				logError(1,
 					 "%s errorHandler: Cannot reset the device ERROR %08X\n",
 					 tag, res);
 			}
@@ -168,7 +168,7 @@ int errorHandler(u8 *event, int size)
 			dumpErrorInfo(NULL, 0);
 			res = fts_system_reset();
 			if (res < OK) {
-				MI_TOUCH_LOGE(1,
+				logError(1,
 					 "%s errorHandler: Cannot reset the device ERROR %08X\n",
 					 tag, res);
 			}
@@ -176,49 +176,49 @@ int errorHandler(u8 *event, int size)
 			break;
 
 		case EVT_TYPE_ERROR_ITO_FORCETOGND:
-			MI_TOUCH_LOGE(1, "%s errorHandler: Force Short to GND!\n", tag);
+			logError(1, "%s errorHandler: Force Short to GND!\n", tag);
 			break;
 		case EVT_TYPE_ERROR_ITO_SENSETOGND:
-			MI_TOUCH_LOGE(1, "%s errorHandler: Sense short to GND! \n",
+			logError(1, "%s errorHandler: Sense short to GND! \n",
 				 tag);
 			break;
 		case EVT_TYPE_ERROR_ITO_FORCETOVDD:
-			MI_TOUCH_LOGE(1, "%s errorHandler: Force short to VDD!\n",
+			logError(1, "%s errorHandler: Force short to VDD!\n",
 				 tag);
 			break;
 		case EVT_TYPE_ERROR_ITO_SENSETOVDD:
-			MI_TOUCH_LOGE(1, "%s errorHandler: Sense short to VDD!\n",
+			logError(1, "%s errorHandler: Sense short to VDD!\n",
 				 tag);
 			break;
 		case EVT_TYPE_ERROR_ITO_FORCE_P2P:
-			MI_TOUCH_LOGE(1, "%s errorHandler: Force Pin to Pin Short!\n",
+			logError(1, "%s errorHandler: Force Pin to Pin Short!\n",
 				 tag);
 			break;
 		case EVT_TYPE_ERROR_ITO_SENSE_P2P:
-			MI_TOUCH_LOGE(1, "%s errorHandler: Sense Pin to Pin Short!\n",
+			logError(1, "%s errorHandler: Sense Pin to Pin Short!\n",
 				 tag);
 			break;
 		case EVT_TYPE_ERROR_ITO_FORCEOPEN:
-			MI_TOUCH_LOGE(1, "%s errorHandler: Force Open !\n", tag);
+			logError(1, "%s errorHandler: Force Open !\n", tag);
 			break;
 		case EVT_TYPE_ERROR_ITO_SENSEOPEN:
-			MI_TOUCH_LOGE(1, "%s errorHandler: Sense Open !\n", tag);
+			logError(1, "%s errorHandler: Sense Open !\n", tag);
 			break;
 		case EVT_TYPE_ERROR_ITO_KEYOPEN:
-			MI_TOUCH_LOGE(1, "%s errorHandler: Key Open !\n", tag);
+			logError(1, "%s errorHandler: Key Open !\n", tag);
 			break;
 
 		default:
-			MI_TOUCH_LOGN(1, "%s errorHandler: No Action taken! \n",
+			logError(1, "%s errorHandler: No Action taken! \n",
 				 tag);
 			break;
 
 		}
-		MI_TOUCH_LOGN(1, "%s errorHandler: handling Finished! res = %08X\n",
+		logError(1, "%s errorHandler: handling Finished! res = %08X\n",
 			 tag, res);
 		return res;
 	} else {
-		MI_TOUCH_LOGE(1,
+		logError(1,
 			 "%s errorHandler: event Null or not correct size! ERROR %08X \n",
 			 tag, ERROR_OP_NOT_ALLOW);
 		return ERROR_OP_NOT_ALLOW;
@@ -236,7 +236,7 @@ int addErrorIntoList(u8 *event, int size)
 {
 	int i = 0;
 
-	MI_TOUCH_LOGD(1, "%s Adding error in to ErrorList... \n", tag);
+	logError(1, "%s Adding error in to ErrorList... \n", tag);
 
 	memcpy(&errors.list[errors.last_index * FIFO_EVENT_SIZE], event, size);
 	i = FIFO_EVENT_SIZE - size;
@@ -247,11 +247,11 @@ int addErrorIntoList(u8 *event, int size)
 		memset(&errors.list[errors.last_index * FIFO_EVENT_SIZE + size],
 		       0, i);
 	}
-	MI_TOUCH_LOGD(1, "%s Adding error in to ErrorList... FINISHED!\n", tag);
+	logError(1, "%s Adding error in to ErrorList... FINISHED!\n", tag);
 
 	errors.count += 1;
 	if (errors.count > FIFO_DEPTH)
-		MI_TOUCH_LOGE(1,
+		logError(1,
 			 "%s ErrorList is going in overflow... the first %d event(s) were override!\n",
 			 tag, errors.count - FIFO_DEPTH);
 	errors.last_index = (errors.last_index + 1) % FIFO_DEPTH;

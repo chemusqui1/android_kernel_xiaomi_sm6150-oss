@@ -107,7 +107,7 @@ int getFWdata(const char *pathToFile, u8 **data, int *size)
 	int res, from = 0;
 	char *path = (char *)pathToFile;
 
-	MI_TOUCH_LOGI(1, "%s %s: getFWdata starting ...\n", tag, __func__);
+	logError(1, "%s %s: getFWdata starting ...\n", tag, __func__);
 	if (strncmp(pathToFile, "NULL", 4) == 0) {
 		from = 1;
 		path = (char *)fts_info->board->default_fw_name;
@@ -115,7 +115,7 @@ int getFWdata(const char *pathToFile, u8 **data, int *size)
 	switch (from) {
 #ifdef FW_H_FILE
 	case 1:
-		MI_TOUCH_LOGI(1, "%s Read FW from .h file!\n", tag);
+		logError(1, "%s Read FW from .h file!\n", tag);
 		*size = FW_SIZE_NAME;
 		*data = (u8 *) kmalloc((*size) * sizeof(u8), GFP_KERNEL);
 		if (*data == NULL) {
@@ -129,7 +129,7 @@ int getFWdata(const char *pathToFile, u8 **data, int *size)
 		break;
 #endif
 	default:
-		MI_TOUCH_LOGI(1, "%s %s: Read FW from BIN file %s !\n", tag, __func__, path);
+		logError(1, "%s %s: Read FW from BIN file %s !\n", tag, __func__, path);
 		dev = getDev();
 
 		if (dev != NULL) {
@@ -164,7 +164,7 @@ int getFWdata(const char *pathToFile, u8 **data, int *size)
 
 	}
 
-	MI_TOUCH_LOGI(1, "%s %s: getFWdata Finished!\n", tag, __func__);
+	logError(1, "%s %s: getFWdata Finished!\n", tag, __func__);
 	return OK;
 
 }
@@ -368,9 +368,9 @@ int parseBinFile(u8 *fw_data, int fw_size, Firmware *fwData, int keep_cx)
 	int dimension, index = 0;
 	u32 temp;
 	int res, i;
-	MI_TOUCH_LOGI(1, "%s %s: Read Touch Frimware\n", tag, __func__);
+	logError(1, "%s %s: Read Touch Frimware\n", tag, __func__);
 	if (fw_size < FW_HEADER_SIZE + FW_BYTES_ALLIGN || fw_data == NULL) {
-		MI_TOUCH_LOGE(1,
+		logError(1,
 			 "%s parseBinFile: Read only %d instead of %d... ERROR %08X\n",
 			 tag, fw_size, FW_HEADER_SIZE + FW_BYTES_ALLIGN,
 			 ERROR_FILE_PARSE);
@@ -379,27 +379,27 @@ int parseBinFile(u8 *fw_data, int fw_size, Firmware *fwData, int keep_cx)
 	} else {
 		u8ToU32(&fw_data[index], &temp);
 		if (temp != FW_HEADER_SIGNATURE) {
-			MI_TOUCH_LOGE(1,
+			logError(1,
 				 "%s parseBinFile: Wrong Signature %08X ... ERROR %08X\n",
 				 tag, temp, ERROR_FILE_PARSE);
 			res = ERROR_FILE_PARSE;
 			goto END;
 		}
-		MI_TOUCH_LOGD(0, "%s parseBinFile: Fw Signature OK!\n", tag);
+		logError(0, "%s parseBinFile: Fw Signature OK!\n", tag);
 		index += FW_BYTES_ALLIGN;
 		u8ToU32(&fw_data[index], &temp);
 		if (temp != FW_FTB_VER) {
-			MI_TOUCH_LOGE(1,
+			logError(1,
 				 "%s parseBinFile: Wrong ftb_version %08X ... ERROR %08X\n",
 				 tag, temp, ERROR_FILE_PARSE);
 			res = ERROR_FILE_PARSE;
 			goto END;
 		}
-		MI_TOUCH_LOGD(0, "%s parseBinFile: ftb_version OK!\n", tag);
+		logError(0, "%s parseBinFile: ftb_version OK!\n", tag);
 		index += FW_BYTES_ALLIGN;
 		if (fw_data[index] != DCHIP_ID_0
 		    || fw_data[index + 1] != DCHIP_ID_1) {
-			MI_TOUCH_LOGE(1,
+			logError(1,
 				 "%s parseBinFile: Wrong target %02X != %02X  %02X != %02X ... ERROR %08X\n",
 				 tag, fw_data[index], DCHIP_ID_0,
 				 fw_data[index + 1], DCHIP_ID_1,
@@ -409,19 +409,19 @@ int parseBinFile(u8 *fw_data, int fw_size, Firmware *fwData, int keep_cx)
 		}
 		index += FW_BYTES_ALLIGN;
 		u8ToU32(&fw_data[index], &temp);
-		MI_TOUCH_LOGD(1, "%s parseBinFile: FILE SVN REV = %08X\n", tag,
+		logError(1, "%s parseBinFile: FILE SVN REV = %08X\n", tag,
 			 temp);
 
 		index += FW_BYTES_ALLIGN;
 		u8ToU32(&fw_data[index], &temp);
 		fwData->fw_ver = temp;
-		MI_TOUCH_LOGD(1, "%s parseBinFile: FILE Fw Version = %04X\n", tag,
+		logError(1, "%s parseBinFile: FILE Fw Version = %04X\n", tag,
 			 fwData->fw_ver);
 
 		index += FW_BYTES_ALLIGN;
 		u8ToU32(&fw_data[index], &temp);
 		fwData->config_id = temp;
-		MI_TOUCH_LOGD(1, "%s parseBinFile: FILE Config Project ID = %08X\n",
+		logError(1, "%s parseBinFile: FILE Config Project ID = %08X\n",
 			 tag, temp);
 
 		index += FW_BYTES_ALLIGN;
@@ -432,34 +432,34 @@ int parseBinFile(u8 *fw_data, int fw_size, Firmware *fwData, int keep_cx)
 		index += FW_BYTES_ALLIGN * 2;
 
 		index += FW_BYTES_ALLIGN;
-		MI_TOUCH_LOGD(1, "%s parseBinFile: File External Release =  ", tag);
+		logError(1, "%s parseBinFile: File External Release =  ", tag);
 		for (i = 0; i < EXTERNAL_RELEASE_INFO_SIZE; i++) {
 			fwData->externalRelease[i] = fw_data[index++];
 			logError(1, "%02X ", fwData->externalRelease[i]);
 		}
-		MI_TOUCH_LOGD(1, "\n");
+		logError(1, "\n");
 
 		u8ToU32(&fw_data[index], &temp);
 		fwData->sec0_size = temp;
-		MI_TOUCH_LOGD(1, "%s parseBinFile:  sec0_size = %08X (%d bytes)\n",
+		logError(1, "%s parseBinFile:  sec0_size = %08X (%d bytes)\n",
 			 tag, fwData->sec0_size, fwData->sec0_size);
 
 		index += FW_BYTES_ALLIGN;
 		u8ToU32(&fw_data[index], &temp);
 		fwData->sec1_size = temp;
-		MI_TOUCH_LOGD(1, "%s parseBinFile:  sec1_size = %08X (%d bytes)\n",
+		logError(1, "%s parseBinFile:  sec1_size = %08X (%d bytes)\n",
 			 tag, fwData->sec1_size, fwData->sec1_size);
 
 		index += FW_BYTES_ALLIGN;
 		u8ToU32(&fw_data[index], &temp);
 		fwData->sec2_size = temp;
-		MI_TOUCH_LOGD(1, "%s parseBinFile:  sec2_size = %08X (%d bytes) \n",
+		logError(1, "%s parseBinFile:  sec2_size = %08X (%d bytes) \n",
 			 tag, fwData->sec2_size, fwData->sec2_size);
 
 		index += FW_BYTES_ALLIGN;
 		u8ToU32(&fw_data[index], &temp);
 		fwData->sec3_size = temp;
-		MI_TOUCH_LOGD(1, "%s parseBinFile:  sec3_size = %08X (%d bytes) \n",
+		logError(1, "%s parseBinFile:  sec3_size = %08X (%d bytes) \n",
 			 tag, fwData->sec3_size, fwData->sec3_size);
 
 		index += FW_BYTES_ALLIGN;
@@ -470,7 +470,7 @@ int parseBinFile(u8 *fw_data, int fw_size, Firmware *fwData, int keep_cx)
 		temp = fw_size;
 
 		if (dimension + FW_HEADER_SIZE + FW_BYTES_ALLIGN != temp) {
-			MI_TOUCH_LOGE(1,
+			logError(1,
 				 "%s parseBinFile: Read only %d instead of %d... ERROR %08X\n",
 				 tag, fw_size,
 				 dimension + FW_HEADER_SIZE + FW_BYTES_ALLIGN,
@@ -496,13 +496,13 @@ int parseBinFile(u8 *fw_data, int fw_size, Firmware *fwData, int keep_cx)
 				 FW_CX_VERSION], &fwData->cx_ver);
 
 		} else {
-			MI_TOUCH_LOGN(1,
+			logError(1,
 				 "%s parseBinFile: Initialize cx_ver to default value! \n",
 				 tag);
 			fwData->cx_ver = systemInfo.u16_cxVer;
 		}
 
-		MI_TOUCH_LOGD(1, "%s parseBinFile: CX Version = %04X \n", tag,
+		logError(1, "%s parseBinFile: CX Version = %04X \n", tag,
 			 fwData->cx_ver);
 
 		fwData->data_size = dimension;
@@ -513,14 +513,14 @@ int parseBinFile(u8 *fw_data, int fw_size, Firmware *fwData, int keep_cx)
 		fwData->cx_area_size = fw_data[index++];
 		fwData->fw_config_size = fw_data[index];
 
-		MI_TOUCH_LOGD(1, "%s Code Pages: %d panel area Pages: %d"
+		logError(1, "%s Code Pages: %d panel area Pages: %d"
 			" cx area Pages: %d fw config Pages: %d !\n", tag,
 			 fwData->fw_code_size, fwData->panel_config_size,
 			fwData->cx_area_size, fwData->fw_config_size);
 
 		if ((fwData->fw_code_size == 0) || (fwData->panel_config_size == 0) ||
 			(fwData->cx_area_size == 0) || (fwData->fw_config_size == 0)) {
-			MI_TOUCH_LOGD(1, "%s Using default flash Address\n", tag);
+			logError(1, "%s Using default flash Address\n", tag);
 			fwData->code_start_addr = FLASH_ADDR_CODE;
 			fwData->cx_start_addr = FLASH_ADDR_CX;
 			fwData->config_start_addr = FLASH_ADDR_CONFIG;
@@ -537,12 +537,12 @@ int parseBinFile(u8 *fw_data, int fw_size, Firmware *fwData, int keep_cx)
 						FLASH_PAGE_SIZE) / 4));
 		}
 
-		MI_TOUCH_LOGD(1, "%s Code start addr: 0x%08X cx start addr: 0x%08X"
+		logError(1, "%s Code start addr: 0x%08X cx start addr: 0x%08X"
 			" fw start addr: 0x%08X !\n", tag,
 			 fwData->code_start_addr, fwData->cx_start_addr,
 			fwData->config_start_addr);
 
-		MI_TOUCH_LOGI(1, "%s %s: READ FW DONE %d bytes!\n", tag, __func__, fwData->data_size);
+		logError(1, "%s %s: READ FW DONE %d bytes!\n", tag, __func__, fwData->data_size);
 		res = OK;
 		goto END;
 	}

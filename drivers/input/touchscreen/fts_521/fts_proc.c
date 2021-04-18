@@ -1713,7 +1713,7 @@ static ssize_t fts_driver_test_write(struct file *file, const char __user *buf,
 				index += j;
 				goto END_DIAGNOSTIC;
 			} else {
-				MI_TOUCH_LOGD(1, "%s %s: Echo FOUND... OK!\n", tag, __func__, res);
+				logError(1, "%s %s: Echo FOUND... OK!\n", tag, __func__, res);
 				j = snprintf(&driver_test_buff[index],
 					     fileSize - index,
 					     "Echo FOUND... OK!\n");
