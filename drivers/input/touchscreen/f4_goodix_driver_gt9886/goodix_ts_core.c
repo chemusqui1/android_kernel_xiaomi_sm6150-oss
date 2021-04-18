@@ -41,7 +41,6 @@
 #define INPUT_TYPE_B_PROTOCOL
 #endif
 #include <linux/backlight.h>
-#include "../xiaomi/xiaomi_touch.h"
 
 #define INPUT_EVENT_START						0
 #define INPUT_EVENT_SENSITIVE_MODE_OFF			0
