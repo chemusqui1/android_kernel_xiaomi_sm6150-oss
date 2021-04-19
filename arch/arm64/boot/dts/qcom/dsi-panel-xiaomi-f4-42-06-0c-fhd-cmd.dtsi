@@ -74,7 +74,6 @@
 					15 01 00 00 10 00 02 53 20];
 		qcom,mdss-dsi-dispparam-hbm-fod-off-command-state = "dsi_hs_mode";
 
-		qcom,disp-doze-backlight-threshold = <8>;
 		qcom,disp-fod-off-dimming-delay = <85>;
 
 		qcom,disp-doze-lpm-backlight = <20>;
