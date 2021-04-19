@@ -1121,7 +1121,7 @@ int dsi_display_set_power(struct drm_connector *connector,
 		msm_drm_notifier_call_chain(MSM_DRM_EVENT_BLANK, &notify_data);
 		break;
 	case SDE_MODE_DPMS_ON:
-		if (is_lp_mode(display->panel->power_mode))
+		if (is_lp_mode(display->panel->power_mode)){
 			msm_drm_notifier_call_chain(MSM_DRM_EARLY_EVENT_BLANK, &notify_data);
 			rc = dsi_panel_set_nolp(display->panel);
 			msm_drm_notifier_call_chain(MSM_DRM_EVENT_BLANK, &notify_data);
