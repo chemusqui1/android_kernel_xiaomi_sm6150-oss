@@ -705,8 +705,8 @@ static u32 dsi_panel_get_backlight(struct dsi_panel *panel)
 
 	if (panel->doze_enabled && panel->doze_mode == DSI_DOZE_HBM)
 		bl_level = panel->bl_config.bl_doze_hbm;
-	else if (panel->doze_enabled && panel->doze_mode == DSI_DOZE_LPM)
-		bl_level = panel->bl_config.bl_doze_lpm;
+	else if (panel->doze_enabled && panel->doze_mode == DSI_DOZE_LBM)
+		bl_level = panel->bl_config.bl_doze_lbm;
 	else if (!panel->doze_enabled)
 		bl_level = panel->bl_config.bl_level;
 
@@ -752,7 +752,7 @@ int dsi_panel_update_doze(struct dsi_panel *panel) {
 		if (rc)
 			pr_err("[%s] failed to send DSI_CMD_SET_DOZE_HBM cmd, rc=%d\n",
 					panel->name, rc);
-	} else if (panel->doze_enabled && panel->doze_mode == DSI_DOZE_LPM) {
+	} else if (panel->doze_enabled && panel->doze_mode == DSI_DOZE_LBM) {
 		rc = dsi_panel_tx_cmd_set(panel, DSI_CMD_SET_DOZE_LBM);
 		if (rc)
 			pr_err("[%s] failed to send DSI_CMD_SET_DOZE_LBM cmd, rc=%d\n",
@@ -2577,12 +2577,12 @@ static int dsi_panel_parse_bl_config(struct dsi_panel *panel)
 		"qcom,mdss-dsi-bl-inverted-dbv");
 
 	rc = utils->read_u32(utils->data,
-			"qcom,disp-doze-lpm-backlight", &val);
+			"qcom,disp-doze-lbm-backlight", &val);
 	if (rc) {
-		panel->bl_config.bl_doze_lpm = 0;
-		pr_debug("set doze lpm backlight to 0\n");
+		panel->bl_config.bl_doze_lbm = 0;
+		pr_debug("set doze lbm backlight to 0\n");
 	} else {
-		panel->bl_config.bl_doze_lpm = val;
+		panel->bl_config.bl_doze_lbm = val;
 	}
 
 	rc = utils->read_u32(utils->data,
@@ -3645,7 +3645,7 @@ struct dsi_panel *dsi_panel_get(struct device *parent,
 	if (rc)
 		pr_debug("failed to parse esd config, rc=%d\n", rc);
 
-	panel->doze_mode = DSI_DOZE_LPM;
+	panel->doze_mode = DSI_DOZE_LBM;
 	panel->doze_enabled = false;
 
 	panel->power_mode = SDE_MODE_DPMS_OFF;

@@ -54,7 +54,7 @@ enum dsi_backlight_type {
 };
 
 enum dsi_doze_mode_type {
-	DSI_DOZE_LPM = 0,
+	DSI_DOZE_LBM = 0,
 	DSI_DOZE_HBM,
 };
 
@@ -124,7 +124,7 @@ struct dsi_backlight_config {
 	u32 bl_scale;
 	u32 bl_scale_ad;
 	bool bl_inverted_dbv;
-	u32 bl_doze_lpm;
+	u32 bl_doze_lbm;
 	u32 bl_doze_hbm;
 
 	int en_gpio;
