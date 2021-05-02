@@ -63,17 +63,6 @@
 		/* IRQF_ONESHOT | IRQF_TRIGGER_FALLING */
 		/* qcom,esd-err-irq-gpio = <&tlmm 32 0x2002>; */
 
-		qcom,mdss-dsi-dispparam-hbm-fod-on-command = [
-					39 00 00 00 00 00 03 F0 5A 5A
-					15 00 00 00 00 00 02 B0 03
-					15 00 00 00 00 00 02 B7 C9
-					39 00 00 00 00 00 03 F0 A5 A5
-					15 01 00 00 10 00 02 53 E0];
-		qcom,mdss-dsi-dispparam-hbm-fod-on-command-state = "dsi_hs_mode";
-		qcom,mdss-dsi-dispparam-hbm-fod-off-command = [
-					15 01 00 00 10 00 02 53 20];
-		qcom,mdss-dsi-dispparam-hbm-fod-off-command-state = "dsi_hs_mode";
-
 		qcom,disp-doze-backlight-threshold = <8>;
 		qcom,disp-fod-off-dimming-delay = <85>;
 
