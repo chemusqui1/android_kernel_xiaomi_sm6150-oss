@@ -246,6 +246,7 @@ struct dsi_panel {
 
 	bool doze_enabled;
 	enum dsi_doze_mode_type doze_mode;
+	u32 doze_backlight_threshold;
 
 	struct brightness_alpha_pair *fod_dim_lut;
 	u32 fod_dim_lut_count;
@@ -389,8 +390,6 @@ int dsi_panel_parse_esd_reg_read_configs(struct dsi_panel *panel);
 void dsi_panel_ext_bridge_put(struct dsi_panel *panel);
 
 int dsi_panel_set_doze_status(struct dsi_panel *panel, bool status);
-
-int dsi_panel_set_doze_mode(struct dsi_panel *panel, enum dsi_doze_mode_type mode);
 
 int dsi_panel_set_fod_hbm(struct dsi_panel *panel, bool status);
 
