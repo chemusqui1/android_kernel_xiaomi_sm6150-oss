@@ -788,20 +788,6 @@ int dsi_panel_set_doze_mode(struct dsi_panel *panel, enum dsi_doze_mode_type mod
 	return dsi_panel_update_doze(panel);
 }
 
-int dsi_panel_switch_doze_mode(struct dsi_panel *panel, bool status){
-	if (panel->doze_enabled){
-		if (status){
-			panel->doze_mode = DSI_DOZE_HBM;
-		} else {
-			panel->doze_mode = DSI_DOZE_LPM;
-		}
-	} else {
-		panel->doze_mode = DSI_DOZE_LPM;
-	}
-	
-	return dsi_panel_update_doze(panel);
-}
-
 int dsi_panel_set_fod_hbm(struct dsi_panel *panel, bool status)
 {
 	int rc = 0;
@@ -814,6 +800,8 @@ int dsi_panel_set_fod_hbm(struct dsi_panel *panel, bool status)
 		if (rc)
 			pr_err("[%s] failed to send DSI_CMD_SET_DISP_HBM_FOD_ON cmd, rc=%d\n",
 					panel->name, rc);
+	} else if (panel->doze_enabled) {
+		dsi_panel_update_doze(panel);
 	} else {
 		rc = dsi_panel_tx_cmd_set(panel, DSI_CMD_SET_DISP_HBM_FOD_OFF);
 		if (rc)
