@@ -94,9 +94,6 @@
 					39 01 00 00 01 00 02 53 E0];
 		qcom,mdss-dsi-dispparam-hbm-fod-on-command-state = "dsi_lp_mode";
 
-		qcom,disp-doze-lpm-backlight = <20>;
-		qcom,disp-doze-hbm-backlight = <266>;
-
 		qcom,mdss-dsi-display-timings {
 			timing@0{
 				qcom,mdss-dsi-panel-width = <1080>;

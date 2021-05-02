@@ -73,9 +73,6 @@
 		qcom,mdss-dsi-panel-fod-off-51-index = <1>;
 		qcom,disp-backlight-pulse-threshold = <1038>;
 
-		qcom,disp-doze-lpm-backlight = <20>;
-		qcom,disp-doze-hbm-backlight = <266>;
-
 		qcom,mdss-dsi-display-timings {
 			timing@0{
 				qcom,mdss-dsi-panel-width = <1080>;
