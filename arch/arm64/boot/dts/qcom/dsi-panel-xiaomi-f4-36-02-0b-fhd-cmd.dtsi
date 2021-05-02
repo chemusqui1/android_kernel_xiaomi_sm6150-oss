@@ -230,14 +230,15 @@ qcom,disp-fod-dim-lut = <
 				qcom,mdss-dsi-dispparam-dimmingoff-command-state = "dsi_lp_mode";
 
 				qcom,mdss-dsi-doze-hbm-command = [
-					39 00 00 00 00 00 02 65 00
-					39 00 00 00 00 00 02 38 00
-					15 01 00 00 00 00 02 2C 00
-					39 00 00 00 00 00 03 F0 5A 5A
-					15 00 00 00 00 00 02 B0 03
-					15 00 00 00 00 00 02 B7 C9
-					39 00 00 00 00 00 03 F0 A5 A5
-					15 01 00 00 10 00 02 53 E0];
+					/* 20h----dimming off */
+					39 00 00 00 00 00 02 53 20
+					/* Exit HBM Mode */
+					39 01 00 00 00 00 03 51 00 1F
+					39 00 00 00 00 00 02 6F 02
+					39 00 00 00 00 00 03 51 00 EE
+					39 00 00 00 00 00 02 39 00
+					39 00 00 00 00 00 02 65 01
+					15 01 00 00 00 00 02 2C 00];
 				qcom,mdss-dsi-doze-lbm-command = [
 					/* 20h----dimming off */
 					39 00 00 00 00 00 02 53 20
