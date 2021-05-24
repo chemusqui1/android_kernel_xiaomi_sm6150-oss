@@ -1557,11 +1557,4 @@ config HWCONF_MANAGER
         It provides all kinds of components configuration information and
         monitor values.
 
-config FACTORY_BUILD
-	bool "distiguish factory version from dev version"
-	default n
-	help
-	  This macro will be defined when build factory version. It is used to
-	  distinguish factory and dev codes in kernel.
-
 source "techpack/Kconfig"

@@ -250,24 +250,7 @@ static ssize_t fts_fwupdate_show(struct device *dev,
 	/*fwupdate_stat: ERROR code Returned by flashProcedure. */
 	return snprintf(buf, PAGE_SIZE, "{ %08X }\n", info->fwupdate_stat);
 }
-/*Update firmware before tp selftest only in factory package
- *@output: firmware update result
- */
- #ifdef CONFIG_FACTORY_BUILD
-static ssize_t fts_auto_fwupdate_show(struct device *dev, struct device_attribute *attr, char *buf)
-{
-	int ret = 0;
-	struct fts_ts_info *info = dev_get_drvdata(dev);
-	logError(1, "%s Update firmware befor tp selftest\n", tag);
-	ret = fts_fw_update(info, NULL, 0);
-	if (ret < OK) {
-		logError(1, "%s Cannot execute fw upgrade the device ERROR %08X\n", tag, ret);
-		ret = -ENODEV;
-	}
-	logError(1, "%s %s: Update firmware success %08X\n", tag, __func__, ret);
-	return snprintf(buf, PAGE_SIZE, "{ %08X }\n", ret);
-}
-#endif
+
 /***************************************** UTILITIES (current fw_ver/conf_id, active mode, file fw_ver/conf_id)  ***************************************************/
 /**
 * File node to show on terminal external release version in Little Endian (first the less significant byte) \n
@@ -3176,9 +3159,6 @@ static DEVICE_ATTR(fts_lockdown, (S_IRUGO | S_IWUSR | S_IWGRP),
 		   fts_lockdown_show, fts_lockdown_store);
 static DEVICE_ATTR(fwupdate, (S_IRUGO | S_IWUSR | S_IWGRP), fts_fwupdate_show,
 		   fts_fwupdate_store);
-#ifdef CONFIG_FACTORY_BUILD
-static DEVICE_ATTR(auto_fwupdate, (S_IRUGO), fts_auto_fwupdate_show, NULL);
-#endif
 static DEVICE_ATTR(panel_vendor, (S_IRUGO), fts_panel_vendor_show, NULL);
 static DEVICE_ATTR(panel_color, (S_IRUGO), fts_panel_color_show, NULL);
 static DEVICE_ATTR(panel_display, (S_IRUGO), fts_panel_display_show, NULL);
@@ -3247,9 +3227,6 @@ static DEVICE_ATTR(hover_tune, (S_IRUGO | S_IWUSR | S_IWGRP), NULL, fts_hover_au
 
 static struct attribute *fts_attr_group[] = {
 	&dev_attr_fwupdate.attr,
-#ifdef CONFIG_FACTORY_BUILD
-	&dev_attr_auto_fwupdate.attr,
-#endif
 	&dev_attr_appid.attr,
 	&dev_attr_mode_active.attr,
 	&dev_attr_fw_file_test.attr,
@@ -5068,34 +5045,20 @@ static void fts_mode_handler_work(struct work_struct *work)
 static void fts_resume_work(struct work_struct *work)
 {
 	struct fts_ts_info *info;
-#ifdef CONFIG_FACTORY_BUILD
-	int retval = 0;
-#endif
 	info = container_of(work, struct fts_ts_info, resume_work);
 	logError(1, "%s %s: resume enter\n", VENDOR_TAG, __func__);
-#ifndef CONFIG_FACTORY_BUILD
 	fts_disableInterrupt();
 #ifdef CONFIG_SECURE_TOUCH
 	fts_secure_stop(info, true);
 #endif
-#else
-	retval = fts_enable_reg(info, true);
-	if (retval < 0) {
-		logError(1, "%s: ERROR Failed to enable regulators\n", VENDOR_TAG);
-	}
-#endif
 	info->resume_bit = 1;
-#ifndef CONFIG_FACTORY_BUILD
 #ifdef CONFIG_FTS_FOD_AREA_REPORT
 	if (!info->fod_pressed) {
 #endif
-#endif
 	fts_system_reset();
 	release_all_touches(info);
-#ifndef CONFIG_FACTORY_BUILD
 #ifdef CONFIG_FTS_FOD_AREA_REPORT
 	}
-#endif
 #endif
 	info->fod_status_set = false;
 	fts_mode_handler(info, 0);
@@ -5112,9 +5075,6 @@ static void fts_resume_work(struct work_struct *work)
 static void fts_suspend_work(struct work_struct *work)
 {
 	struct fts_ts_info *info;
-#ifdef CONFIG_FACTORY_BUILD
-	int retval = 0;
-#endif
 	info = container_of(work, struct fts_ts_info, suspend_work);
 	logError(1, "%s %s: suspend enter\n", VENDOR_TAG, __func__);
 #ifdef CONFIG_SECURE_TOUCH
@@ -5128,18 +5088,10 @@ static void fts_suspend_work(struct work_struct *work)
 
 	info->sensor_sleep = true;
 
-#ifdef CONFIG_FACTORY_BUILD
-	retval = fts_enable_reg(info, false);
-	if (retval < 0) {
-		logError(1, "%s %s: ERROR Failed to enable regulators\n", tag,
-			__func__);
-	}
-#else
 	if (info->gesture_enabled || info->fod_status) {
 		logError(1, "%s %s: enter gesture mode\n", VENDOR_TAG, __func__);
 		fts_enableInterrupt();
 	}
-#endif
 #ifdef CONFIG_FTS_TOUCH_COUNT_DUMP
 	sysfs_notify(&fts_info->fts_touch_dev->kobj, NULL,
 			"touch_suspend_notify");
@@ -6199,10 +6151,6 @@ static int fts_probe(struct spi_device *client)
 	int retval;
 	int skip_5_1 = 0;
 	u16 bus_type;
-#ifdef CONFIG_FACTORY_BUILD
-	int res = 0;
-	u8 gesture_cmd[6] = {0xA2, 0x03, 0x20, 0x00, 0x00, 0x01};
-#endif
 	logError(1, "%s %s: driver ver: %s\n", VENDOR_TAG, __func__, FTS_TS_DRV_VERSION);
 
 #ifdef I2C_INTERFACE
@@ -6579,18 +6527,7 @@ static int fts_probe(struct spi_device *client)
 #endif
 #ifdef CONFIG_FTS_FOD_AREA_REPORT
 	mutex_init(&(info->fod_mutex));
-#ifdef CONFIG_FACTORY_BUILD
-	mutex_lock(&info->fod_mutex);
-	res = fts_write(gesture_cmd, ARRAY_SIZE(gesture_cmd));
-	if (res < OK)
-		logError(1, "%s %s: enter gesture mode fail!ERROR %08X\n",
-		tag, __func__, res);
-	fts_enableInterrupt();
-	info->fod_status = 1;
-	mutex_unlock(&info->fod_mutex);
-#else
 	info->fod_status = -1;
-#endif
 	error =
 	    sysfs_create_file(&info->fts_touch_dev->kobj,
 			      &dev_attr_fod_test.attr);

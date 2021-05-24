@@ -1850,9 +1850,6 @@ static int goodix_ts_suspend(struct goodix_ts_core *core_data)
 		}
 	}
 	mutex_unlock(&goodix_modules.mutex);
-#ifdef CONFIG_FACTORY_BUILD
-	goodix_ts_power_off(core_data);
-#endif
 
 out:
 	goodix_ts_release_connects(core_data);
@@ -1874,9 +1871,6 @@ static int goodix_ts_resume(struct goodix_ts_core *core_data)
 		return 0;
 
 	ts_info("Resume start");
-#ifdef CONFIG_FACTORY_BUILD
-	goodix_ts_power_on(core_data);
-#endif
 
 	mutex_lock(&goodix_modules.mutex);
 	if (!list_empty(&goodix_modules.head)) {

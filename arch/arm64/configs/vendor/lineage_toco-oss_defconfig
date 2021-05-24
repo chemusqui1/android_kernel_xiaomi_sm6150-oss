@@ -5961,7 +5961,6 @@ CONFIG_SG_POOL=y
 CONFIG_ARCH_HAS_SG_CHAIN=y
 CONFIG_SBITMAP=y
 # CONFIG_STRING_SELFTEST is not set
-# CONFIG_FACTORY_BUILD is not set
 
 #
 # Techpack audio options

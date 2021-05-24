@@ -2708,12 +2708,7 @@ static int goodix_ts_probe(struct platform_device *pdev)
 
 	core_data->fod_status = -1;
 
-#ifdef CONFIG_FACTORY_BUILD
-	/*enable fod flag for factory test*/
-	core_data->fod_enabled = true;
-#else
 	core_data->fod_enabled = false;
-#endif
 	//wake_lock_init(&core_data->tp_wakelock, WAKE_LOCK_SUSPEND, "touch_locker");
 #ifdef CONFIG_TOUCHSCREEN_GOODIX_DEBUG_FS
 	core_data->debugfs = debugfs_create_dir("tp_debug", NULL);
