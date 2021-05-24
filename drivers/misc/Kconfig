@@ -621,11 +621,6 @@ config LDO_WL2866D
         ---help---
         This option enables multi ldo wl2866d.
 
-config PERF_HELPER
-	default y
-	help
-	  this module support record perf lock history and other perf messages.
-
 source "drivers/misc/c2port/Kconfig"
 source "drivers/misc/eeprom/Kconfig"
 source "drivers/misc/cb710/Kconfig"
@@ -660,9 +655,3 @@ config OKL4_LINK_SHBUF
 	      which can be written to or read from to access the shared memory. An ioctl
 	      on the device is used to send a virtual interrupt to the partner cell.
 
-
-config GPIO_TESTING_MODE
-	tristate "A simple GPIO testing mode driver"
-	default n
-	help
-	  Enable driver for a simple testing mode detection
