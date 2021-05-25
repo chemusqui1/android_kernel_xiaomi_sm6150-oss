@@ -1652,8 +1652,6 @@ static inline void tcp_init_send_head(struct sock *sk)
 	sk->sk_send_head = NULL;
 }
 
-static inline void tcp_init_send_head(struct sock *sk);
-
 /* write queue abstraction */
 static inline void tcp_write_queue_purge(struct sock *sk)
 {
