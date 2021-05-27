@@ -503,7 +503,6 @@ int goodix_get_reg_and_cfg(struct goodix_ts_device *ts_dev,
 		ts_dev->reg.esd = normal_pkg->reg_info.esd.addr;
 		ts_dev->reg.command = normal_pkg->reg_info.command.addr;
 		ts_dev->reg.coor = normal_pkg->reg_info.coor.addr;
-		ts_dev->reg.palm_reg = TS_PALM_REG;
 		ts_dev->reg.gesture = normal_pkg->reg_info.gesture.addr;
 		ts_dev->reg.fw_request = normal_pkg->reg_info.fw_request.addr;
 		ts_dev->reg.proximity = normal_pkg->reg_info.proximity.addr;

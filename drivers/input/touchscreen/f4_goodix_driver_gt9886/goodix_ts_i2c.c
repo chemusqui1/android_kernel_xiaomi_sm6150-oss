@@ -2136,18 +2136,6 @@ static int goodix_event_handler(struct goodix_ts_device *dev,
 	int r;
 
 	ts_log("goodix_event_handler enter");
-	/*read big palm event if touch palm sensor was enabled*/
-	if (core_data->palm_sensor_enabled) {
-		r = goodix_i2c_read_trans(dev, dev->reg.palm_reg, pre_buf, 1);
-		if (unlikely(r < 0))
-			return r;
-		ts_log("%s palm event reg addr 0x%04x, return 0x%02x\n", __func__, dev->reg.palm_reg, pre_buf[0]);
-		if ((pre_buf[0] & 0xf0) == 0x20) {
-			ts_info("%s palm event detected, inform touch psensor\n", __func__);
-			core_data->palm_event = true;
-			return r;
-		}
-	}
 
 	/*memset(pre_buf, 0, sizeof(pre_buf)); */
 	r = goodix_i2c_read_trans(dev, dev->reg.coor,

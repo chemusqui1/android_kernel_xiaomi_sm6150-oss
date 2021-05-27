@@ -55,8 +55,6 @@
 #define INPUT_EVENT_DOUBLE_TAP_FOR_VOLUME		9
 #define INPUT_EVENT_SINGLE_TAP_FOR_VOLUME		10
 #define INPUT_EVENT_LONG_SINGLE_TAP_FOR_VOLUME	11
-#define INPUT_EVENT_PALM_OFF					12
-#define INPUT_EVENT_PALM_ON						13
 #define INPUT_EVENT_END							13
 #define IS_USB_EXIST							0x06
 #define IS_USB_NOT_EXIST						0x07
@@ -869,10 +867,7 @@ static void release_all_touches(struct goodix_ts_core *core_data)
 		input_mt_report_slot_state(core_data->input_dev, type, 0);
 	}
 	ts_err("enter:%s core_data->touch_id=%d\n", __func__, core_data->touch_id);
-	if (!core_data->palm_event)
-		core_data->sleep_finger = core_data->touch_id;
-	else
-		core_data->sleep_finger = 0;
+	core_data->sleep_finger = core_data->touch_id;
 	core_data->touch_id = 0;
 	input_sync(core_data->input_dev);
 	mutex_unlock(&ts_dev->report_mutex);
@@ -1822,7 +1817,6 @@ int goodix_ts_suspend(struct goodix_ts_core *core_data)
 out:
 	/* release all the touch IDs */
 	release_all_touches(core_data);
-	core_data->palm_event = false;
 	goodix_ts_irq_enable(core_data, true);
 	core_data->ts_event.event_data.touch_data.touch_num = 0;
 

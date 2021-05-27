@@ -25,8 +25,6 @@
 #define TS_HIGH_SENSE_CFG 0x03
 #define TS_RQST_FW_RETRY_TIMES 2
 #define TS_LOCKDOWN_REG 0xBDB4
-#define TS_PALM_REG 0x4101 /*palm event reg addr is 0x4101 */
-
 
 #pragma pack(1)
 struct goodix_cfg_pkg_reg {

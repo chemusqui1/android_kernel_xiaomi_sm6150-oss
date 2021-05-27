@@ -351,7 +351,6 @@ struct goodix_ts_regs {
 	u16 esd;
 	u16 command;
 	u16 coor;
-	u16 palm_reg;
 	u16 gesture;
 	u16 fw_request;
 	u16 proximity;
@@ -514,8 +513,6 @@ struct goodix_ts_core {
 	atomic_t suspend_stat;
 	int is_usb_exist;
 	int gesture_enabled;
-	bool palm_sensor_enabled;
-	bool palm_event;
 	int fod_status;
 	bool fod_enabled;
 	int aod_status;
