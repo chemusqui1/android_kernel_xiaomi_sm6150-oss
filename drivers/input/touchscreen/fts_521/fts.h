@@ -215,11 +215,6 @@ typedef void (*event_dispatch_handler_t)
  (struct fts_ts_info *info, unsigned char *data);
 
 #ifdef CONFIG_SECURE_TOUCH
-struct fts_secure_delay {
-	bool palm_pending;
-	int palm_value;
-};
-
 struct fts_secure_info {
 	bool secure_inited;
 	atomic_t st_1st_complete;
@@ -227,8 +222,6 @@ struct fts_secure_info {
 	atomic_t st_pending_irqs;
 	struct completion st_irq_processed;
 	struct completion st_powerdown;
-	struct fts_secure_delay scr_delay;
-	struct mutex palm_lock;
 	void *fts_info;
 };
 #endif
@@ -364,8 +357,6 @@ struct fts_ts_info {
 	bool fod_pressed;
 	bool p_sensor_changed;
 	bool p_sensor_switch;
-	bool palm_sensor_changed;
-	bool palm_sensor_switch;
 	bool tp_pm_suspend;
 	struct completion pm_resume_completion;
 	bool gamemode_enable;

@@ -109,8 +109,6 @@ do { \
 #define INPUT_EVENT_DOUBLE_TAP_FOR_VOLUME		9
 #define INPUT_EVENT_SINGLE_TAP_FOR_VOLUME		10
 #define INPUT_EVENT_LONG_SINGLE_TAP_FOR_VOLUME		11
-#define INPUT_EVENT_PALM_OFF		12
-#define INPUT_EVENT_PALM_ON		13
 #define INPUT_EVENT_END				13
 
 extern SysInfo systemInfo;
@@ -3014,13 +3012,6 @@ static void fts_secure_work(struct fts_secure_info *scr_info)
 	logError(1, "%s %s SECURE_FILTER:enable irq\n", tag, __func__);
 }
 
-static void fts_flush_delay_task(struct fts_secure_info *scr_info)
-{
-	if (scr_info->scr_delay.palm_pending) {
-		scr_info->scr_delay.palm_pending = false;
-	}
-}
-
 static int fts_secure_filter_interrupt(struct fts_ts_info *info)
 {
 	struct fts_secure_info *scr_info = info->secure_info;
@@ -3090,14 +3081,11 @@ static ssize_t fts_secure_touch_enable_store (struct device *dev, struct device_
 				tag, __func__);
 			return ret;
 		}
-		mutex_lock(&scr_info->palm_lock);
 		atomic_set(&scr_info->st_enabled, 0);
 		fts_secure_touch_notify(info);
 		complete(&scr_info->st_irq_processed);
 		fts_event_handler(info->client->irq, info);
 		complete(&scr_info->st_powerdown);
-		fts_flush_delay_task(scr_info);
-		mutex_unlock(&scr_info->palm_lock);
 		logError(1, "%s %s SECURE_TOUCH_ENABLE[W]:disable secure touch successful\n",
 			tag, __func__);
 	break;
@@ -3107,7 +3095,6 @@ static ssize_t fts_secure_touch_enable_store (struct device *dev, struct device_
 				tag, __func__);
 			return ret;
 		}
-		mutex_lock(&scr_info->palm_lock);
 		/*wait until finish process all normal irq*/
 		synchronize_irq(info->client->irq);
 
@@ -3116,7 +3103,6 @@ static ssize_t fts_secure_touch_enable_store (struct device *dev, struct device_
 		reinit_completion(&scr_info->st_irq_processed);
 		atomic_set(&scr_info->st_pending_irqs, 0);
 		atomic_set(&scr_info->st_enabled, 1);
-		mutex_unlock(&scr_info->palm_lock);
 		logError(1, "%s %s SECURE_TOUCH_ENABLE[W]:enable secure touch successful\n",
 			tag, __func__);
 	break;
@@ -5594,10 +5580,6 @@ static void fts_switch_mode_work(struct work_struct *work)
 		}
 	}
 #endif
-#ifdef PHONE_PALM
-	if (value >= INPUT_EVENT_PALM_OFF && value <= INPUT_EVENT_PALM_ON)
-		info->palm_enabled = value - INPUT_EVENT_PALM_OFF;
-#endif
 	if (ms != NULL) {
 		kfree(ms);
 		ms = NULL;
@@ -6086,8 +6068,6 @@ int fts_secure_init(struct fts_ts_info *info)
 	}
 
 	logError(1, "%s fts_secure_init\n", tag);
-
-	mutex_init(&scr_info->palm_lock);
 
 	init_completion(&scr_info->st_powerdown);
 	init_completion(&scr_info->st_irq_processed);
