@@ -1,18 +1,6 @@
-Linux kernel
-============
+# ReBorn-Kernel-SM6150-labs
+Testing repo for ReBorn Kernel
+# WARNING!
+A lot of cringed/memed stuff can happen here. I'm not responsible if you use this on your device, and have a Galaxy Note 7, or applying this onto your toaster and then MiuiCamera fixing your plug by fixing a CPU regression.
 
-This file was moved to Documentation/admin-guide/README.rst
-
-Please notice that there are several guides for kernel developers and users.
-These guides can be rendered in a number of formats, like HTML and PDF.
-
-In order to build the documentation, use ``make htmldocs`` or
-``make pdfdocs``.
-
-There are various text files in the Documentation/ subdirectory,
-several of them using the Restructured Text markup notation.
-See Documentation/00-INDEX for a list of what is contained in each file.
-
-Please read the Documentation/process/changes.rst file, as it contains the
-requirements for building and running the kernel, and information about
-the problems which may result by upgrading your kernel.
+Being said that... The party can start
